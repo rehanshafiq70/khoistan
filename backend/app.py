@@ -28,6 +28,15 @@ with app.app_context():
         print("Admin users created. System starts empty — add data via the UI.")
 
 
+# ── Health Check ─────────────────────────────────────────────────────────────
+@app.route('/')
+def health():
+    return jsonify({
+        'status': '✅ Kohistan Transport API is running!',
+        'version': '2.0',
+        'endpoints': '/api/dashboard, /api/drivers, /api/vehicles, /api/trips, /api/routes'
+    })
+
 # ═══════════════════════════════════════════════════════════
 # AUTHENTICATION
 # ═══════════════════════════════════════════════════════════
