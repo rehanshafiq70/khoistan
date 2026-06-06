@@ -1,19 +1,19 @@
 import os
 
 class Config:
-    # ── Auto-detect: PostgreSQL on Render, SQLite locally ──────────────────
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-    DATABASE_URL = os.environ.get('DATABASE_URL', '')
+    # ── Get DATABASE_URL from environment ──────────────────────────────────
+    _db_url = os.environ.get('DATABASE_URL', '').strip()
 
-    # Render gives postgres:// but SQLAlchemy needs postgresql://
-    if DATABASE_URL.startswith('postgres://'):
-        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    # Fix Render's postgres:// → postgresql://
+    if _db_url.startswith('postgres://'):
+        _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
 
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL or f"sqlite:///{os.path.join(BASE_DIR, 'transport.db')}"
+    # Use PostgreSQL if available, else fall back to SQLite
+    SQLALCHEMY_DATABASE_URI = _db_url if _db_url.startswith(('postgresql://', 'mysql://')) \
+        else f"sqlite:///{os.path.join(BASE_DIR, 'transport.db')}"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'kkg-transport-secret-2026')
-
-    # Allow CORS from any origin (needed for Vercel frontend)
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'khoistan2026secret')
     CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*')
