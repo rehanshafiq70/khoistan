@@ -28,19 +28,99 @@ def get_db_engine():
     
     return create_engine(db_url)
 
+from sqlalchemy import text
+
 try:
     engine = get_db_engine()
+    # Initialize SQLite database tables if they do not exist
+    if "sqlite" in str(engine.url):
+        with engine.begin() as conn:
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100) NOT NULL,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    password VARCHAR(256) NOT NULL,
+                    role VARCHAR(20) DEFAULT 'dispatcher',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS drivers (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100) NOT NULL,
+                    name_ur VARCHAR(150),
+                    phone VARCHAR(20),
+                    cnic VARCHAR(20),
+                    license_no VARCHAR(50),
+                    status VARCHAR(20) DEFAULT 'available',
+                    notes TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS vehicles (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    number_plate VARCHAR(20) NOT NULL UNIQUE,
+                    model VARCHAR(100),
+                    capacity VARCHAR(50),
+                    owner_name VARCHAR(100),
+                    condition VARCHAR(20) DEFAULT 'good',
+                    notes TEXT
+                )
+            """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS routes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    city_name VARCHAR(100) NOT NULL,
+                    city_name_ur VARCHAR(150),
+                    group_name VARCHAR(100)
+                )
+            """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS trips (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    driver_id INTEGER NOT NULL,
+                    vehicle_id INTEGER,
+                    driver_name VARCHAR(100),
+                    driver_phone VARCHAR(20),
+                    vehicle_number VARCHAR(20),
+                    from_city VARCHAR(100) NOT NULL,
+                    to_city VARCHAR(100) NOT NULL,
+                    trip_date DATE,
+                    freight_amount REAL DEFAULT 0.0,
+                    commission_amount REAL DEFAULT 0.0,
+                    status VARCHAR(20) DEFAULT 'available',
+                    notes TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(driver_id) REFERENCES drivers(id),
+                    FOREIGN KEY(vehicle_id) REFERENCES vehicles(id)
+                )
+            """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS commissions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    trip_id INTEGER NOT NULL UNIQUE,
+                    driver_id INTEGER NOT NULL,
+                    amount REAL NOT NULL,
+                    paid REAL DEFAULT 0.0,
+                    status VARCHAR(20) DEFAULT 'pending',
+                    paid_date DATE,
+                    notes TEXT,
+                    FOREIGN KEY(trip_id) REFERENCES trips(id),
+                    FOREIGN KEY(driver_id) REFERENCES drivers(id)
+                )
+            """))
 except Exception as e:
-    st.error(f"Failed to connect to database: {e}")
+    st.error(f"Failed to connect or initialize database: {e}")
     st.stop()
 
 # ── LOAD DATA HELPER ────────────────────────────────────────────────────────
 def load_data(query):
     try:
         with engine.connect() as conn:
-            return pd.read_sql(query, conn)
+            return pd.read_sql(text(query), conn)
     except Exception as e:
-        # Fallback empty dataframe with appropriate columns if table doesn't exist
         st.warning(f"Error reading query: {e}")
         return pd.DataFrame()
 
@@ -116,17 +196,17 @@ st.markdown("""
         letter-spacing: 0.05em;
     }
     </style>
-""", unsafe_style=True)
+""", unsafe_allow_html=True)
 
 # ── HEADER ──────────────────────────────────────────────────────────────────
 col_logo, col_text = st.columns([1, 6])
 with col_logo:
     st.write("")
-    st.markdown("<h1 style='font-size:4.5rem; margin:0; text-align:center;'>🚛</h1>", unsafe_style=True)
+    st.markdown("<h1 style='font-size:4.5rem; margin:0; text-align:center;'>🚛</h1>", unsafe_allow_html=True)
 with col_text:
-    st.markdown('<div class="main-title">Kohistan Kashmir Goods Transport Company</div>', unsafe_style=True)
-    st.markdown('<div class="urdu-title">کوہستان کشمیر گڈز ٹرانسپورٹ کمپنی</div>', unsafe_style=True)
-    st.markdown('<div class="sub-title">Live Interactive Analytics Dashboard & Customer Network Directory</div>', unsafe_style=True)
+    st.markdown('<div class="main-title">Kohistan Kashmir Goods Transport Company</div>', unsafe_allow_html=True)
+    st.markdown('<div class="urdu-title">کوہستان کشمیر گڈز ٹرانسپورٹ کمپنی</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Live Interactive Analytics Dashboard & Customer Network Directory</div>', unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -182,30 +262,30 @@ with tab1:
                 <div class="metric-val">{total_trips}</div>
                 <div class="metric-label">Total Dispatch Trips</div>
             </div>
-        """, unsafe_style=True)
+        """, unsafe_allow_html=True)
     with col2:
         st.markdown(f"""
             <div class="metric-card" style="border-top-color: #16A34A;">
                 <div class="metric-val-green">Rs {total_freight:,.2f}</div>
                 <div class="metric-label">Total Revenue (Freight)</div>
             </div>
-        """, unsafe_style=True)
+        """, unsafe_allow_html=True)
     with col3:
         st.markdown(f"""
             <div class="metric-card" style="border-top-color: #DC2626;">
                 <div class="metric-val-red">Rs {total_commission:,.2f}</div>
                 <div class="metric-label">Total Commission Earned</div>
             </div>
-        """, unsafe_style=True)
+        """, unsafe_allow_html=True)
     with col4:
         st.markdown(f"""
             <div class="metric-card">
                 <div class="metric-val">Rs {avg_freight:,.2f}</div>
                 <div class="metric-label">Average Freight / Trip</div>
             </div>
-        """, unsafe_style=True)
+        """, unsafe_allow_html=True)
         
-    st.markdown("<br>", unsafe_style=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     # ── VISUALIZATIONS ──
     col_chart1, col_chart2 = st.columns(2)
@@ -257,7 +337,7 @@ with tab1:
         else:
             st.info("No data available for the selected filters.")
 
-    st.markdown("<br>", unsafe_style=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     col_chart3, col_chart4 = st.columns([1, 2])
     with col_chart3:
@@ -429,5 +509,5 @@ st.markdown(
     "<div style='text-align: center; color: #94a3b8; font-size: 0.8rem;'>"
     "© 2026 Kohistan Kashmir Goods Transport Company. Powered by Streamlit Community Cloud."
     "</div>",
-    unsafe_style=True
+    unsafe_allow_html=True
 )
