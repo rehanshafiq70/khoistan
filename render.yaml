@@ -16,6 +16,22 @@ services:
       - key: CORS_ORIGINS
         value: "*"
 
+  # ── React Frontend (Static Site) ─────────────────────────────────
+  - type: web
+    name: khoistan-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    headers:
+      - key: Cache-Control
+        value: no-cache
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: khoistan-backend
+          property: url
+
   # ── PostgreSQL Database ──────────────────────────────────────────
 databases:
   - name: khoistan-db
