@@ -55,28 +55,30 @@ function Dashboard({ lang, t }) {
         <div className="hero-bg" style={{backgroundImage:`url(${heroTruck})`}}/>
         <div className="hero-overlay"/>
         <div className="hero-content">
-          <h1 style={{fontSize:'1.85rem',fontWeight:900,color:'white',textShadow:'0 2px 12px rgba(0,0,0,0.7)',marginBottom:'0.35rem'}}>
-            🚛 {t('Kohistan Kashmir Goods Transport','کوہستان کشمیر گڈز ٹرانسپورٹ')}
+          <h1 className={`company-heading ${lang==='ur' ? 'company-heading-ur' : ''}`}>
+            🚛 {t('Kohistan Kashmir Goods Transport Company','کوہستان کشمیر گڈز ٹرانسپورٹ کمپنی')}
           </h1>
-          <p style={{color:'rgba(255,255,255,0.72)',fontSize:'0.9rem'}}>
+          <p className="company-sub">
             {t('Managing Routes, Vehicles & Commissions Efficiently','روٹس، گاڑیاں اور کمیشن کا موثر انتظام')}
           </p>
-          <div style={{display:'flex',alignItems:'center',gap:'0.6rem',marginTop:'1rem'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'0.6rem',marginTop:'1rem',flexWrap:'wrap'}}>
             <span className="pulse-dot"/>
-            <span style={{color:'#10b981',fontSize:'0.82rem',fontWeight:700}}>{t('LIVE DISPATCH','لائیو ڈسپیچ')}</span>
-            <span style={{color:'rgba(255,255,255,0.4)',fontSize:'0.78rem',marginLeft:'0.5rem'}}>📅 {todayLabel}</span>
+            <span style={{color:'#16A34A',fontSize:'0.82rem',fontWeight:700}}>{t('LIVE DISPATCH','لائیو ڈسپیچ')}</span>
+            <span style={{color:'rgba(255,255,255,0.45)',fontSize:'0.78rem',marginLeft:'0.5rem'}}>📅 {todayLabel}</span>
           </div>
         </div>
-        <div className="hero-badge">
-          <div className="hero-badge-title">📞 {t('Contact Numbers','رابطہ نمبرز')}</div>
+
+        {/* Contact Card */}
+        <div className="contact-hero-card">
+          <div className="contact-card-title">📞 {t('Contact Numbers','رابطہ نمبرز')}</div>
           {[
             {name:'میاں محمد شفیق', phone:'0300-7045570'},
-            {name:'میاں ریحان شفیق',phone:'0333-6569070'},
-            {name:'میاں فرحان شفیق',phone:'0345-0509570'},
+            {name:'میاں ریحان شفیق', phone:'0333-6569070'},
+            {name:'میاں فرحان شفیق', phone:'0345-0509570'},
           ].map(c=>(
-            <div key={c.phone} style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.4rem'}}>
-              <span style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.8)',fontFamily:'Noto Nastaliq Urdu,serif'}}>{c.name}</span>
-              <a href={`tel:${c.phone}`} style={{color:'#f59e0b',fontWeight:700,fontSize:'0.8rem',textDecoration:'none'}}><bdi>{c.phone}</bdi></a>
+            <div key={c.phone} className="contact-row">
+              <span className="contact-name">{c.name}</span>
+              <a href={`tel:${c.phone}`} className="contact-phone"><bdi>{c.phone}</bdi></a>
             </div>
           ))}
         </div>

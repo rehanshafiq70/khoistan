@@ -5,6 +5,19 @@ const today = new Date().toISOString().split('T')[0];
 const EMPTY = { driver_name:'', driver_phone:'', vehicle_number:'', from_city:'', to_city:'', trip_date:today, freight_amount:'', commission_amount:'', status:'available', notes:'' };
 const STATUS_COLOR = { available:'#10b981', on_trip:'#f59e0b', completed:'#3b82f6', cancelled:'#ef4444' };
 
+const CITY_LIST = [
+  'Adda 217','Adda Sheikhan','Ahmed Pur Sial','18-Hazari',
+  'Bhakkar T','Chakrallah','Chinji','Chowk Azam','Chund Bharwana',
+  'Darya Khan','Dulewala','Fateh Pur','Garh Morr','Girote','Gojra',
+  'Harnoli','Hyderabad Thal','Janiwala','Jaranwala','Jhang T',
+  'Joharabad','Kala Bagh','Kaloor Kot','Karoor Lal Eson','Khushab T',
+  'Kot Shahkir','Kundian','Lawa','Layyah','Mianwali T','Mongi Banglow',
+  'Morr Khunda','Noshehra Soon','NP Thal','Pichnand','Piplan',
+  'Pir Mahal','Pirkot','Quaid Abad','Saray Muhajir','Shah Jewna',
+  'Shorkot','Shorkot Cantt.','Toba Tek Singh','Wan Bhachran','Wariam Wala',
+  'Faisalabad',
+].sort();
+
 function TripEntry({ lang, t }) {
   const [form,      setForm]      = useState(EMPTY);
   const [trips,     setTrips]     = useState([]);
@@ -99,9 +112,10 @@ function TripEntry({ lang, t }) {
     setEditSaving(false);
   };
 
-  const routeOptions = routes.length > 0
-    ? routes.map(r => <option key={r.id} value={r.city_name}>{r.city_name}{r.city_name_ur?` — ${r.city_name_ur}`:''}</option>)
-    : [<option key="f" value="Faisalabad">Faisalabad</option>];
+  // Merge backend routes with hardcoded cities, deduplicate
+  const backendCities = routes.map(r => r.city_name);
+  const allCities = [...new Set([...CITY_LIST, ...backendCities])].sort();
+  const routeOptions = allCities.map(c => <option key={c} value={c}>{c}</option>);
 
   const totalFreight    = trips.reduce((s,tr)=>s+Number(tr.freight_amount||0),0);
   const totalCommission = trips.reduce((s,tr)=>s+Number(tr.commission_amount||0),0);

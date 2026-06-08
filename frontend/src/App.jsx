@@ -11,6 +11,7 @@ import VehicleHistory from './components/VehicleHistory';
 import Reports     from './components/Reports';
 import GlobalSearch from './components/GlobalSearch';
 import Analytics   from './components/Analytics';
+import TownDirectory from './components/TownDirectory';
 import kkgtLogo    from './assets/kkgt_logo.png';
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
       case 'vehicles':   return <Vehicles   lang={lang} t={t} />;
       case 'history':    return <VehicleHistory lang={lang} t={t} />;
       case 'routes':     return <Routes     lang={lang} t={t} />;
+      case 'directory':  return <TownDirectory lang={lang} t={t} />;
       case 'analytics':  return <Analytics  lang={lang} t={t} />;
       case 'reports':    return <Reports    lang={lang} t={t} />;
       default:           return <Dashboard  lang={lang} t={t} />;
@@ -69,10 +71,11 @@ function App() {
     {
       section: t('RECORDS', 'ریکارڈ'),
       items: [
-        { key: 'drivers',  icon: '👨', en: 'Drivers',         ur: 'ڈرائیورز' },
-        { key: 'vehicles', icon: '🚛', en: 'Vehicles',        ur: 'گاڑیاں' },
-        { key: 'history',  icon: '📂', en: 'Vehicle History', ur: 'گاڑی ریکارڈ' },
-        { key: 'routes',   icon: '📍', en: 'Routes',          ur: 'روٹس' },
+        { key: 'drivers',    icon: '👨', en: 'Drivers',          ur: 'ڈرائیورز' },
+        { key: 'vehicles',  icon: '🚛', en: 'Vehicles',         ur: 'گاڑیاں' },
+        { key: 'history',   icon: '📂', en: 'Vehicle History',  ur: 'گاڑی ریکارڈ' },
+        { key: 'routes',    icon: '📍', en: 'Routes',           ur: 'روٹس' },
+        { key: 'directory', icon: '📦', en: 'Town Directory',   ur: 'شہر ڈائریکٹری' },
       ],
     },
     {
@@ -92,12 +95,19 @@ function App() {
       <aside className="sidebar">
         {/* Brand */}
         <div className="brand">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'0.65rem' }}>
             <img src={kkgtLogo} alt="KKGT Logo"
-              style={{ width: '46px', height: '46px', borderRadius: '10px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
-            <div>
+              style={{ width:'44px', height:'44px', borderRadius:'10px', objectFit:'cover', boxShadow:'0 4px 12px rgba(0,0,0,0.35)', flexShrink:0 }} />
+            <div style={{ minWidth:0 }}>
               <div className="brand-name">KKGT</div>
-              <div className="brand-sub">{t('Kohistan Kashmir Goods', 'کوہستان کشمیر گڈز')}</div>
+              <div className="brand-sub" style={{ lineHeight:1.35 }}>
+                {lang === 'ur'
+                  ? 'کوہستان کشمیر گڈز'
+                  : 'Kohistan Kashmir'}
+              </div>
+              <div className="brand-sub" style={{ opacity:0.75 }}>
+                {lang === 'ur' ? 'ٹرانسپورٹ کمپنی' : 'Goods Transport Co.'}
+              </div>
             </div>
           </div>
         </div>

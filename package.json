@@ -1,0 +1,24 @@
+{
+  "name": "khoistan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "frontend": "npm run dev --prefix frontend",
+    "backend": "cd backend && python app.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rehanshafiq70/khoistan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rehanshafiq70/khoistan/issues"
+  },
+  "homepage": "https://github.com/rehanshafiq70/khoistan#readme"
+}
